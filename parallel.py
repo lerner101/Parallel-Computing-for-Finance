@@ -46,9 +46,6 @@ def metrics_multiprocess(df: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(results, ignore_index=True)
 
 
-def metrics_serial(df: pd.DataFrame) -> pd.DataFrame:
-    parts = split_by_symbol(df)
-    return pd.concat([compute_metrics_one(p) for p in parts], ignore_index=True)
 
 
 def _peak_rss_mb() -> float:
@@ -74,10 +71,7 @@ def run_benchmark(label, func, df):
 if __name__ == "__main__":
     df = load_data_pd("data/market_data-1.csv")
 
-    _ = metrics_serial(df)
-
     print("\nBenchmark results:")
-    run_benchmark("serial", metrics_serial, df)
     run_benchmark("threaded", metrics_threaded, df)
     run_benchmark("multiprocess", metrics_multiprocess, df)
 
