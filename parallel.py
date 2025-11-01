@@ -5,6 +5,16 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_compl
 from data_loader import load_data_pd
 import os, time, sys, resource
 
+'''
+In Python, the Global Interpreter Lock (GIL) lets only one thread execute Python bytecode at a time, 
+so CPU-bound work in pure Python won't speed up with threads. threads are good mainly for I/O-bound tasks or 
+when heavy vectorized C/NumPy/Pandas kernels release the GIL (not all do, and rolling/groupby chains can 
+still contend and incur Python-level overhead). Multiprocessing avoids the GIL by using separate processes, 
+giving true parallelism for per-symbol, CPU-heavy computations like your rolling stats—often faster on 
+multi-core machines—at the cost of higher overhead (process startup), data serialization/copying between processes, 
+and more memory usage. So prefer multiprocessing when the workload is compute-intensive and relatively coarse, 
+and prefer threading for I/O waits or pipelines dominated by GIL-releasing C code. 
+'''
 
 def compute_metrics_one(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
@@ -70,6 +80,7 @@ def run_benchmark(label, func, df):
 
 if __name__ == "__main__":
     df = load_data_pd("data/market_data-1.csv")
+
 
     print("\nBenchmark results:")
     run_benchmark("threaded", metrics_threaded, df)

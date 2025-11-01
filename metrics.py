@@ -4,6 +4,15 @@ import pandas as pd
 import time
 import matplotlib.pyplot as plt
 
+'''
+The main difference between the Pandas and Polars versions is syntax and performance. In Pandas, 
+calculations use groupby with transform and rolling, which run on a single core and 
+can be slower for large datasets. Polars uses expressions like pl.col("price").rolling_mean(...).over("symbol"), 
+which are more compact and run in parallel using a faster backend (Rust). Both produce the same results, but Polars 
+generally finishes much faster and uses less memory, while Pandas is easier to integrate with existing Python tools like Matplotlib.
+'''
+
+
 def metrics_pd():
     df = load_data_pd("data/market_data-1.csv")
 
