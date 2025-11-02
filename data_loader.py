@@ -3,14 +3,12 @@ import polars as pl
 import time
 import tracemalloc
 
-
 def load_data_pd(file_path):
     df = pd.read_csv(file_path)
     df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df = df.set_index('timestamp')
-    df = df[['symbol', 'price']]
+    df = df[['timestamp', 'symbol', 'price']]        # keep timestamp as column
+    df = df.sort_values('timestamp').reset_index(drop=True)
     return df
-
 
 def load_data_polar(file_path):
     df = pl.read_csv(file_path)
